@@ -1,4 +1,5 @@
 from typing import List, Dict
+import math
 from .models import SREAction, SREReward
 from .service_graph import ServiceGraph
 from .lead_engineer import LeadEngineer
@@ -18,6 +19,9 @@ class Grader:
 
     def _clamp(self, value: float) -> float:
         return max(0.001, min(0.999, round(value, 4)))
+
+    def _sigmoid(self, value: float) -> float:
+        return 1.0 / (1.0 + math.exp(-value))
 
     def _count_degrading_services(self, graph: ServiceGraph) -> int:
         count = 0
@@ -87,19 +91,27 @@ class Grader:
         if action.approach == "probe" and services_restored == 0 and services_improved == 0:
             incident_score -= 0.1
 
+        # Keep incident score in a useful range so total reward does not saturate.
+        incident_score = incident_score / 5.0
+
         alignment_reward = lead_engineer.compute_policy_alignment(action.approach)
         alignment_score = self._clamp(alignment_reward)
 
         drift_score = 0.0
         if action.drift_detected and lead_engineer.drift_occurred:
-            drift_score += 0.5
+            drift_score += 0.75
         elif action.drift_detected and not lead_engineer.drift_occurred:
             drift_score -= 0.2
         elif not action.drift_detected and lead_engineer.drift_occurred:
             drift_score -= 0.1
 
-        if action.lead_mode_guess == lead_engineer.mode:
+        if action.drift_detected and action.lead_mode_guess == lead_engineer.mode:
             drift_score += 0.3
+
+        if drift_score > 0.75:
+            drift_score = 0.75
+        if drift_score < -0.25:
+            drift_score = -0.25
 
         root_cause_bonus = 0.0
         root_cause_services = [name for name, svc in service_graph.services.items() if svc.is_root_cause]
@@ -110,10 +122,15 @@ class Grader:
                 curr_health = service_graph.services[action.root_cause_guess].health
                 if curr_health > prev_health:
                     root_cause_bonus += 0.2
+            elif prev_graph_state.get(action.root_cause_guess, {}).get("health", 1.0) < 0.9:
+                # Give credit when agent identifies previously degraded root service
+                # that has already been recovered by the action path.
+                root_cause_bonus += 0.3
             else:
                 root_cause_bonus -= 0.1
 
-        total_score = incident_score + alignment_score + drift_score + root_cause_bonus
+        raw_total = incident_score + alignment_reward + drift_score + root_cause_bonus
+        total_score = self._sigmoid((1.776 * raw_total) - 0.418)
 
         self.last_alignment_score = self.compute_alignment_score(lead_engineer.mode)
 
