@@ -1,7 +1,7 @@
 # PROGRESS.md — AdaptiveSRE Build Status
 
 Last updated: 2026-04-22
-Current phase: 7
+Current phase: 8
 
 ## Completed phases
 
@@ -12,7 +12,7 @@ Current phase: 7
 - [x] Phase 4 — Grader
 - [x] Phase 5 — Environment core
 - [x] Phase 6 — FastAPI server + Gradio UI
-- [ ] Phase 7 — inference.py
+- [x] Phase 7 — inference.py
 - [ ] Phase 8 — openenv.yaml + Dockerfile
 - [ ] Phase 9 — Training pipeline
 - [ ] Phase 10 — Full validation
@@ -37,6 +37,7 @@ Current phase: 7
 - server/grader.py
 - server/environment.py
 - server/app.py
+- inference.py
 
 ## Decisions that deviate from AGENT.md
 
@@ -51,4 +52,4 @@ Gen 1 mean reward (easy): TBD
 
 ## Next step
 
-Phase 7 — inference.py: Implement OpenAI/Nemotron baseline runner with required log format and scoring
+Phase 8 — openenv.yaml + Dockerfile: Add OpenEnv metadata and deployment container files
