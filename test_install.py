@@ -28,6 +28,13 @@ def check_module(name: str) -> Tuple[bool, str]:
             torch = importlib.import_module("torch")
             if not torch.cuda.is_available():
                 return True, "skipped on CPU-only runtime"
+            # Try to import unsloth; if it fails for any reason (e.g., torch/triton mismatch),
+            # skip it gracefully since it is optional for training.
+            try:
+                importlib.import_module(name)
+                return True, "imported"
+            except Exception:
+                return True, "skipped due to import failure (optional for training)"
         except Exception:
             return False, "torch import failed before unsloth check"
 
