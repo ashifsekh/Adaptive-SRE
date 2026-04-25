@@ -1,6 +1,6 @@
 # PROGRESS.md — AdaptiveSRE Build Status
 
-Last updated: 2026-04-25
+Last updated: 2026-04-26
 Current phase: 10
 
 ## Completed phases
@@ -55,11 +55,27 @@ Current phase: 10
 
 ## Measured results (ACTUAL)
 
-Gen 0 mean reward (easy, CPU, 1B): -0.195
-Gen 1 mean reward (easy, CPU, 1B): -0.167
-Improvement: +0.028 (+14.4%)
-Training time: ~75 min on CPU
-Runs completed: 2 (reproducible)
+Run 1 (easy, CPU, 1B, episodes=8, gens=2):
+
+- Gen 0 mean reward: -0.193
+- Gen 1 mean reward: -0.167
+- Improvement: +0.026
+- GRPO training time: 1:20:05
+
+Run 2 (easy, CPU, 1B, episodes=8, gens=2):
+
+- Gen 0 mean reward: -0.197
+- Gen 1 mean reward: -0.167
+- Improvement: +0.029
+- GRPO training time: 1:13:54
+
+Summary across 2 runs:
+
+- Gen 0 mean reward (avg): -0.195
+- Gen 1 mean reward (avg): -0.167
+- Improvement (avg): +0.028 (+14.4%)
+- Training time: ~75-80 min on CPU
+- Runs completed: 2 (reproducible)
 
 Gen 0 hard task baseline: TBD
 

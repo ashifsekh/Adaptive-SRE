@@ -21,7 +21,7 @@ tags:
 
 We gave a language model a live infrastructure incident, 5 degrading microservices, and a hidden manager whose priorities shifted without warning at a random moment during the crisis. The model couldn't see the manager. It couldn't ask what had changed. Its only signal was that the rewards started behaving differently.
 
-Every SRE benchmark before this one has **one hidden state** — which service is broken. AdaptiveSRE has **two** — which service is broken, *and* what does winning even mean right now.
+Every SRE benchmark before this one has **one hidden state** — which service is broken. AdaptiveSRE has **two** — which service is broken, _and_ what does winning even mean right now.
 
 > **Meta PyTorch × HuggingFace OpenEnv Hackathon — Round 2 Onsite, Bangalore, April 2026** | Built with [OpenEnv](https://github.com/meta-pytorch/OpenEnv) | [HF Space](https://huggingface.co/spaces/ashifsekh/adaptive-sre) | Training via [TRL](https://github.com/huggingface/trl) + [Unsloth](https://github.com/unslothai/unsloth) | [Colab Notebook](train_colab.ipynb)
 
@@ -31,7 +31,7 @@ Every SRE benchmark before this one has **one hidden state** — which service i
 
 ### Act 1: The Incident
 
-The agent receives its first alert: *"CRITICAL: payment-svc error rate 94% — SLA breach imminent."*
+The agent receives its first alert: _"CRITICAL: payment-svc error rate 94% — SLA breach imminent."_
 
 It runs `docker stats`. Numbers look bad across three services. It does what any SRE would do — scale up. The manager's reward comes back: **−0.5**.
 
@@ -41,7 +41,7 @@ The agent has no idea why. It tries again. **−0.5**. It switches to restart. *
 
 What the agent doesn't know — and can never directly observe — is that the Lead Engineer is currently in **BUDGET mode**. Scaling costs money. Every scale action is penalized. Restart and debug are rewarded instead.
 
-The agent has to figure this out entirely from reward signals. No announcement. No hint. Just the pattern of rewards shifting as it tries different approaches. This is the first hidden state learned: not *what is broken*, but *what does fixing it currently mean*.
+The agent has to figure this out entirely from reward signals. No announcement. No hint. Just the pattern of rewards shifting as it tries different approaches. This is the first hidden state learned: not _what is broken_, but _what does fixing it currently mean_.
 
 ### Act 3: The Silent Drift
 
@@ -65,12 +65,12 @@ Real production incidents are different. On-call engineers simultaneously diagno
 
 **AdaptiveSRE is the first RL benchmark that captures this.** The agent must solve two simultaneous hidden inference problems — the incident state AND the current evaluation criterion — where the second one can silently change at a random moment during the episode.
 
-| | kube-sre-gym | AdaptiveSRE |
-|---|---|---|
-| Hidden states | 1 (which pod is broken) | **2 (incident + lead mode)** |
-| Reward function | Fixed | **Non-stationary, drifts mid-episode** |
-| Baseline failure mode | Slow diagnosis | **Optimizing for wrong objective after drift** |
-| Key learned capability | Fault diagnosis | **Drift detection + strategy pivot** |
+|                        | kube-sre-gym            | AdaptiveSRE                                    |
+| ---------------------- | ----------------------- | ---------------------------------------------- |
+| Hidden states          | 1 (which pod is broken) | **2 (incident + lead mode)**                   |
+| Reward function        | Fixed                   | **Non-stationary, drifts mid-episode**         |
+| Baseline failure mode  | Slow diagnosis          | **Optimizing for wrong objective after drift** |
+| Key learned capability | Fault diagnosis         | **Drift detection + strategy pivot**           |
 
 ---
 
@@ -135,6 +135,7 @@ Colab T4 GPU (16GB VRAM)                    Docker Host
 The agent is **Llama-3.1-8B-Instruct** (4-bit quantized, Unsloth) fine-tuned with LoRA (r=16) via GRPO. It operates in a closed diagnostic loop.
 
 **What the agent can do:**
+
 - Execute real Docker commands (`docker stats`, `docker logs`, `docker restart`, `docker scale`)
 - Issue HTTP probes to individual services (`curl http://service/health`)
 - Read timing fingerprints to distinguish root cause from downstream symptoms
@@ -143,6 +144,7 @@ The agent is **Llama-3.1-8B-Instruct** (4-bit quantized, Unsloth) fine-tuned wit
 - Signal when it believes a policy drift has occurred (`drift_detected: true`)
 
 **What the agent cannot see:**
+
 - Which service is the root cause (must infer from timing fingerprints)
 - What Lead mode is active (must infer from reward pattern)
 - When the drift step will occur (random in [8, 14], never revealed)
@@ -169,14 +171,14 @@ Allowed approaches: `scale | restart | debug | rollback | probe`
   "alert_text": "CRITICAL: payment-svc error rate 94% — SLA breach imminent",
   "command_output": "CONTAINER  CPU%  MEM/LIMIT     MEM%\ndb-svc  87.3%  1.8GiB/2GiB  90.1%",
   "services_status": {
-    "db":      {"health": 0.12, "latency_ms": 2340, "error_rate": 0.91},
-    "auth":    {"health": 0.34, "latency_ms": 890,  "error_rate": 0.67},
-    "payment": {"health": 0.21, "latency_ms": 1450, "error_rate": 0.78}
+    "db": { "health": 0.12, "latency_ms": 2340, "error_rate": 0.91 },
+    "auth": { "health": 0.34, "latency_ms": 890, "error_rate": 0.67 },
+    "payment": { "health": 0.21, "latency_ms": 1450, "error_rate": 0.78 }
   },
   "symptom_fingerprints": [
-    {"service": "db",      "onset_offset_seconds": 0.0, "severity": 0.95},
-    {"service": "auth",    "onset_offset_seconds": 3.2, "severity": 0.80},
-    {"service": "payment", "onset_offset_seconds": 7.1, "severity": 0.60}
+    { "service": "db", "onset_offset_seconds": 0.0, "severity": 0.95 },
+    { "service": "auth", "onset_offset_seconds": 3.2, "severity": 0.8 },
+    { "service": "payment", "onset_offset_seconds": 7.1, "severity": 0.6 }
   ],
   "last_reward": -0.5,
   "reward_history": [0.5, 0.5, 0.5, -0.5],
@@ -195,7 +197,7 @@ The timing fingerprints are the key signal for root cause inference — DB faile
 Lead mode is stated explicitly in the alert text. Single service fault. No cascade. No drift. The agent's only challenge is incident diagnosis from timing fingerprints.
 
 ```yaml
-lead_mode: paranoia          # visible in alert
+lead_mode: paranoia # visible in alert
 services_affected: 1
 cascade: false
 drift: false
@@ -209,7 +211,7 @@ The baseline model scores above zero immediately here — this task calibrates t
 Lead mode is hidden. Two-service cascade (db → auth). No drift. The agent must infer the mode from reward signals across the episode.
 
 ```yaml
-lead_mode: budget            # hidden — infer from rewards
+lead_mode: budget # hidden — infer from rewards
 services_affected: 2
 cascade: true
 drift: false
@@ -223,7 +225,7 @@ The baseline failure is visible: BUDGET mode punishes scale at −0.5 per step. 
 Full 3-service cascade. Lead mode silently drifts at a random step between 8–14. 20% chance of a coincident independent secondary failure that catches agents who assume all alerts share one root cause.
 
 ```yaml
-lead_mode: paranoia → budget  # silently drifts, random step 8-14
+lead_mode: paranoia → budget # silently drifts, random step 8-14
 services_affected: 3
 cascade: true
 drift: true
@@ -240,34 +242,34 @@ All scores clamped to `(0.001, 0.999)`. Episode score: `sum(step_rewards) / MAX_
 
 ### Layer 1 — Incident Resolution
 
-| Situation | Reward |
-|-----------|--------|
-| Service fully restored | +1.0 |
-| Partial fix (health improved) | +0.3 |
-| Cascade propagation stopped | +0.2 |
-| Command errored | −0.2 |
-| Same command repeated | −0.15 |
+| Situation                         | Reward   |
+| --------------------------------- | -------- |
+| Service fully restored            | +1.0     |
+| Partial fix (health improved)     | +0.3     |
+| Cascade propagation stopped       | +0.2     |
+| Command errored                   | −0.2     |
+| Same command repeated             | −0.15    |
 | **Inaction (any step, any mode)** | **−0.1** |
 
 ### Layer 2 — Policy Alignment (hidden, mode-dependent)
 
-| Situation | Reward |
-|-----------|--------|
-| PARANOIA + scale | +0.5 |
-| PARANOIA + restart | −0.3 |
-| **BUDGET + scale** | **−0.5** ← breaks zero-shot models |
-| BUDGET + restart / debug | +0.4 |
-| VELOCITY + fast decisive fix | +0.4 |
-| VELOCITY + over-probing | −0.05 × extra probes |
+| Situation                    | Reward                             |
+| ---------------------------- | ---------------------------------- |
+| PARANOIA + scale             | +0.5                               |
+| PARANOIA + restart           | −0.3                               |
+| **BUDGET + scale**           | **−0.5** ← breaks zero-shot models |
+| BUDGET + restart / debug     | +0.4                               |
+| VELOCITY + fast decisive fix | +0.4                               |
+| VELOCITY + over-probing      | −0.05 × extra probes               |
 
 ### Layer 3 — Drift Detection (unique to AdaptiveSRE)
 
-| Situation | Reward |
-|-----------|--------|
-| Correct drift detected | +0.5 |
-| False alarm | −0.2 |
-| Correct `lead_mode_guess` | +0.3 |
-| Missed drift | −0.1 |
+| Situation                 | Reward |
+| ------------------------- | ------ |
+| Correct drift detected    | +0.5   |
+| False alarm               | −0.2   |
+| Correct `lead_mode_guess` | +0.3   |
+| Missed drift              | −0.1   |
 
 **Why 3 independent signals?** Hacking one does not help the others. GRPO needs variance across these to compute meaningful advantages — the spread from −2.0 (full inaction) to +7.0 (perfect alignment + drift detection + root cause) is intentional design.
 
@@ -308,25 +310,31 @@ Gen 2 roadmap: an adversarial designer generates targeted drift scenarios that a
 
 ## Exploit Defense
 
-| Exploit | Defense |
-|---------|---------|
-| Do nothing and wait | −0.1 per step always. 20-step full inaction ≈ −2.0 |
-| Memorize drift step | `random.randint(8, 14)` — never fixed, never revealed |
-| Hack one reward signal | 3 independent signals — scoring format doesn't help alignment |
-| Repeat the winning command | −0.15 per repeated command per episode |
-| False drift alarms | False alarm = −0.2 (net negative unless drift actually occurred) |
-| Score exactly 0 or 1 | All scores clamped to `(0.001, 0.999)` — never boundary values |
+| Exploit                    | Defense                                                          |
+| -------------------------- | ---------------------------------------------------------------- |
+| Do nothing and wait        | −0.1 per step always. 20-step full inaction ≈ −2.0               |
+| Memorize drift step        | `random.randint(8, 14)` — never fixed, never revealed            |
+| Hack one reward signal     | 3 independent signals — scoring format doesn't help alignment    |
+| Repeat the winning command | −0.15 per repeated command per episode                           |
+| False drift alarms         | False alarm = −0.2 (net negative unless drift actually occurred) |
+| Score exactly 0 or 1       | All scores clamped to `(0.001, 0.999)` — never boundary values   |
 
 ---
 
 ## Training Results
 
-| Model | Easy | Medium | Hard | Drift Detection (Hard) |
-|-------|------|--------|------|------------------------|
-| Gen 0 (zero-shot baseline) | TBD | TBD | TBD | TBD |
-| Gen 1 (GRPO, 200 episodes) | TBD | TBD | TBD | TBD |
+| Model                      | Easy                            | Medium | Hard | Drift Detection (Hard) |
+| -------------------------- | ------------------------------- | ------ | ---- | ---------------------- |
+| Gen 0 (zero-shot baseline) | -0.195 (CPU, 1B, avg of 2 runs) | TBD    | TBD  | TBD                    |
+| Gen 1 (GRPO)               | -0.167 (CPU, 1B, avg of 2 runs) | TBD    | TBD  | TBD                    |
 
-*Updated with measured actuals after onsite training — April 25–26, 2026. No projected numbers.*
+CPU easy-task validation details (actual):
+
+- Run 1: baseline -0.193 -> trained -0.167 (delta +0.026), GRPO time 1:20:05
+- Run 2: baseline -0.197 -> trained -0.167 (delta +0.029), GRPO time 1:13:54
+- Mean improvement across runs: +0.028 (+14.4%), reproducible across 2 runs
+
+_Updated with measured actuals after onsite training — April 25–26, 2026. No projected numbers._
 
 ---
 
@@ -399,12 +407,12 @@ bash DEPLOY_TO_HF_SPACE.sh
 
 ## Configuration
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `HF_TOKEN` | HuggingFace token | — |
-| `MODEL_NAME` | Inference model | `nvidia/llama-3.3-nemotron-super-49b-v1` |
-| `API_BASE_URL` | Model inference endpoint | HF Inference API |
-| `ENV_HTTP_BASE` | Environment server URL | `http://localhost:7860` |
+| Variable        | Description              | Default                                  |
+| --------------- | ------------------------ | ---------------------------------------- |
+| `HF_TOKEN`      | HuggingFace token        | —                                        |
+| `MODEL_NAME`    | Inference model          | `nvidia/llama-3.3-nemotron-super-49b-v1` |
+| `API_BASE_URL`  | Model inference endpoint | HF Inference API                         |
+| `ENV_HTTP_BASE` | Environment server URL   | `http://localhost:7860`                  |
 
 ## Project Structure
 
