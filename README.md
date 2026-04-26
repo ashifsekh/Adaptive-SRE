@@ -23,7 +23,7 @@ We gave a language model a live infrastructure incident, 5 degrading microservic
 
 Every SRE benchmark before this one has **one hidden state** — which service is broken. AdaptiveSRE has **two** — which service is broken, _and_ what does winning even mean right now.
 
-> **Meta PyTorch × HuggingFace OpenEnv Hackathon — Round 2 Onsite, Bangalore, April 2026** | Built with [OpenEnv](https://github.com/meta-pytorch/OpenEnv) | [HF Space](https://huggingface.co/spaces/ashifsekh/adaptive-sre) | Training via [TRL](https://github.com/huggingface/trl) + [Unsloth](https://github.com/unslothai/unsloth) | [Colab Notebook](train_colab.ipynb)
+> **Meta PyTorch × HuggingFace OpenEnv Hackathon — Round 2 Onsite, Bangalore, April 2026** | Built with [OpenEnv](https://github.com/meta-pytorch/OpenEnv) | [HF Space](https://huggingface.co/spaces/ashifsekh/adaptive-sre) | Training via [TRL](https://github.com/huggingface/trl) + [Unsloth](https://github.com/unslothai/unsloth) | [Open in Colab](https://colab.research.google.com/github/ashifsekh/Adaptive-SRE/blob/main/train_colab.ipynb) | [Project Writeup](WRITEUP.md)
 
 ---
 
@@ -325,8 +325,8 @@ Gen 2 roadmap: an adversarial designer generates targeted drift scenarios that a
 
 | Model                      | Easy                            | Medium | Hard | Drift Detection (Hard) |
 | -------------------------- | ------------------------------- | ------ | ---- | ---------------------- |
-| Gen 0 (zero-shot baseline) | -0.195 (CPU, 1B, avg of 2 runs) | TBD    | TBD  | TBD                    |
-| Gen 1 (GRPO)               | -0.167 (CPU, 1B, avg of 2 runs) | TBD    | TBD  | TBD                    |
+| Gen 0 (zero-shot baseline) | -0.195 (CPU, 1B, avg of 2 runs) | Pending validation | -0.424 (hard baseline) | Baseline did not detect drift reliably |
+| Gen 1 (GRPO)               | -0.167 (CPU, 1B, avg of 2 runs) | Pending validation | -0.030 (latest hard run) | Suspected drift-detection regression |
 
 CPU easy-task validation details (actual):
 
