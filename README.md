@@ -57,14 +57,14 @@ Key benchmark properties:
 ## How It Works
 
 ```mermaid
-flowchart LR
-  A[Observation] --> B[Agent LLM<br/>Gen0 / Gen1]
-  B --> C[Action JSON<br/>command + mode guesses]
-  C --> D[AdaptiveSRE Environment<br/>5 services + cascade]
-  D --> E[Grader<br/>incident + alignment + drift]
+flowchart TD
+  A[Observation] --> B[Agent LLM]
+  B --> C[Action JSON]
+  C --> D[Environment]
+  D --> E[Grader]
   E --> F[Reward]
-  F --> G[GRPO Update<br/>TRL + Unsloth]
-  G --> B
+  F --> G[GRPO Update]
+  G -->|next episode| B
 ```
 
 Hard-task demo behavior to look for:
