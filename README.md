@@ -323,10 +323,10 @@ Gen 2 roadmap: an adversarial designer generates targeted drift scenarios that a
 
 ## Training Results
 
-| Model                      | Easy                            | Medium | Hard | Drift Detection (Hard) |
-| -------------------------- | ------------------------------- | ------ | ---- | ---------------------- |
-| Gen 0 (zero-shot baseline) | -0.195 (CPU, 1B, avg of 2 runs) | Pending validation | -0.424 (hard baseline) | Baseline did not detect drift reliably |
-| Gen 1 (GRPO)               | -0.167 (CPU, 1B, avg of 2 runs) | Pending validation | -0.030 (latest hard run) | Suspected drift-detection regression |
+| Model                      | Easy                            | Medium             | Hard                     | Drift Detection (Hard)                 |
+| -------------------------- | ------------------------------- | ------------------ | ------------------------ | -------------------------------------- |
+| Gen 0 (zero-shot baseline) | -0.195 (CPU, 1B, avg of 2 runs) | Pending validation | -0.424 (hard baseline)   | Baseline did not detect drift reliably |
+| Gen 1 (GRPO)               | -0.167 (CPU, 1B, avg of 2 runs) | Pending validation | -0.030 (latest hard run) | Suspected drift-detection regression   |
 
 CPU easy-task validation details (actual):
 
