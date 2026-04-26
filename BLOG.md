@@ -12,7 +12,7 @@ But here is what every benchmark misses: the SRE already knows two things before
 
 The benchmark treats these as the same problem. They are not.
 
-We looked at every SRE benchmark we could find — including the OpenEnv Round 1 winner — and found the same gap in all of them. They test whether an agent can fix a broken service. Not one tests whether the agent understands *why* fixing it matters right now, under this constraint, to this team.
+We looked at every SRE benchmark we could find and found the same gap in all of them. They test whether an agent can fix a broken service. Not one tests whether the agent understands *why* fixing it matters right now, under this constraint, to this team.
 
 That is not a minor omission. That is the actual hard part of on-call work.
 
