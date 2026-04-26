@@ -48,6 +48,8 @@ We trained using GRPO via HuggingFace TRL and Unsloth, comparing a Nemotron base
 
 The hard task improved 4.6× more than the easy task. This is exactly what we expected and hoped for. The easy task has no drift — so GRPO has a smaller surface to improve. The hard task requires the agent to detect a silent shift in objective and recover, which is precisely the behaviour GRPO is pushing probability mass toward.
 
+![Reward Curve](plots/reward_curve.png)
+
 ### The drift detection arc
 
 The most important result is not in the reward table. It is in the alignment score trace during a hard episode:
@@ -63,9 +65,13 @@ The most important result is not in the reward table. It is in the alignment sco
 
 The untrained baseline never recovers from the step-8 collapse. It keeps applying the old strategy, collecting negative rewards, with no mechanism to notice that the rules changed. The GRPO-trained model climbs back to 0.71 by step 12. That gap, between a model that keeps failing and one that notices and corrects, is the entire argument for why this environment is worth training on.
 
+![Alignment Demo](plots/alignment_demo.png)
+
 ### Training loss
 
 Over 60 steps on the easy task, loss oscillated between -0.019 and +0.034 in the early exploration phase, then stabilized near zero from steps 30–50 as the policy converged. A late uptick to +0.028 at step 60 suggests continued learning signal even at the end of the run — we likely left improvement on the table by having to stop at 60 steps due to resource limitations and compute intensity.
+
+![Loss Curve](plots/loss_curve.png)
 
 ---
 
