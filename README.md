@@ -56,25 +56,15 @@ Key benchmark properties:
 
 ## How It Works
 
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│                        ADAPTIVESRE LEARNING LOOP                    │
-│                                                                      │
-│  Observation → Action → Environment Step → Reward → Policy Update   │
-│                                                                      │
-│  ┌────────────┐    ┌───────────────┐    ┌────────────────────────┐  │
-│  │ Agent LLM  │───►│ Action JSON   │───►│ AdaptiveSRE Environment│  │
-│  │ Gen0/Gen1  │    │ command+mode  │    │ (5 services + cascade) │  │
-│  └─────┬──────┘    └───────────────┘    └───────────┬────────────┘  │
-│        │                                            reward            │
-│        │                         ┌────────────────────┴────────────┐  │
-│        └────────────────────────►│ Grader (3-layer reward model)   │  │
-│                                  │ incident + alignment + drift    │  │
-│                                  └───────────────┬─────────────────┘  │
-│                                                  │                    │
-│                                          GRPO (TRL + Unsloth)        │
-│                                          updates policy (Gen1)       │
-└──────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+  A[Observation] --> B[Agent LLM<br/>Gen0 / Gen1]
+  B --> C[Action JSON<br/>command + mode guesses]
+  C --> D[AdaptiveSRE Environment<br/>5 services + cascade]
+  D --> E[Grader<br/>incident + alignment + drift]
+  E --> F[Reward]
+  F --> G[GRPO Update<br/>TRL + Unsloth]
+  G --> B
 ```
 
 Hard-task demo behavior to look for:
