@@ -25,7 +25,14 @@ We gave a language model a live infrastructure incident, 5 degrading microservic
 >
 > **Every SRE benchmark before this one has one hidden state — which service is broken. AdaptiveSRE has two — which service is broken, and what does winning even mean right now.**
 
-> **Meta PyTorch × HuggingFace OpenEnv Hackathon — Round 2 Onsite, Bangalore, April 2026** | Built with [OpenEnv](https://github.com/meta-pytorch/OpenEnv) | [HF Space](https://huggingface.co/spaces/ashifsekh/adaptive-sre) | Training via [TRL](https://github.com/huggingface/trl) + [Unsloth](https://github.com/unslothai/unsloth) | [Open in Colab](https://colab.research.google.com/github/ashifsekh/Adaptive-SRE/blob/main/train_colab.ipynb) | [Project Writeup](WRITEUP.md) | [Blog Post](BLOG.md)
+> **Meta PyTorch × HuggingFace OpenEnv Hackathon — Round 2 Onsite, Bangalore, April 2026**
+
+### 🔗 Quick Links
+- 🌐 **[Live Demo on HF Space](https://huggingface.co/spaces/ashifsekh/adaptive-sre)**
+- 📓 **[Open Training in Colab](https://colab.research.google.com/github/ashifsekh/Adaptive-SRE/blob/main/train_colab.ipynb)**
+- 📝 **[Project Writeup](WRITEUP.md)**
+- 📰 **[Read the Blog Post](BLOG.md)**
+- 🛠️ Built with **[OpenEnv](https://github.com/meta-pytorch/OpenEnv)** and trained via **[TRL](https://github.com/huggingface/trl) + [Unsloth](https://github.com/unslothai/unsloth)**
 
 ---
 
