@@ -29,33 +29,13 @@ We gave a language model a live infrastructure incident, 5 degrading microservic
 
 ---
 
-## The Story: From Incident to Inference
+## What Happens In One Episode
 
-### Act 1: The Incident
-
-The agent receives its first alert: _"CRITICAL: payment-svc error rate 94% — SLA breach imminent."_
-
-It runs `docker stats`. Numbers look bad across three services. It does what any SRE would do — scale up. The manager's reward comes back: **−0.5**.
-
-The agent has no idea why. It tries again. **−0.5**. It switches to restart. **+0.4**. Something changed. The agent doesn't know what.
-
-### Act 2: The Inference Problem
-
-What the agent doesn't know — and can never directly observe — is that the Lead Engineer is currently in **BUDGET mode**. Scaling costs money. Every scale action is penalized. Restart and debug are rewarded instead.
-
-The agent has to figure this out entirely from reward signals. No announcement. No hint. Just the pattern of rewards shifting as it tries different approaches. This is the first hidden state learned: not _what is broken_, but _what does fixing it currently mean_.
-
-### Act 3: The Silent Drift
-
-The hard task begins in **PARANOIA mode** — zero downtime tolerance, scale everything. The agent learns this. Alignment score climbs to 0.82.
-
-Then, at a random step between 8 and 14, the Lead mode silently shifts to **BUDGET**. The agent issues a scale action. Reward: **−0.5**. Alignment collapses to 0.11. For the baseline model, this is fatal — it keeps doing what worked before.
-
-### Act 4: The Recovery
-
-At step 10, the trained agent outputs: `"drift_detected": true`.
-
-It noticed three consecutive rewards turned negative despite actions that previously worked. It infers a policy shift, pivots to restart, and the alignment score climbs back to 0.73. That recovery arc — inference → detection → adaptation — is what GRPO training produced.
+1. Agent receives incident observations (health, latency, errors, fingerprints).
+2. Agent issues an action (`scale`/`restart`/`debug`/`probe`) as JSON.
+3. Environment applies cascade propagation and scores the action.
+4. In hard mode, Lead policy can silently drift at random step 8-14.
+5. Strong behavior = detect drift, pivot strategy, and recover alignment.
 
 ---
 
@@ -73,6 +53,35 @@ Key benchmark properties:
 - Reward function: **Non-stationary, drifts mid-episode**
 - Core failure mode: **Optimizing for the wrong objective after drift**
 - Key learned capability: **Drift detection + strategy pivot**
+
+## How It Works
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                        ADAPTIVESRE LEARNING LOOP                    │
+│                                                                      │
+│  Observation → Action → Environment Step → Reward → Policy Update   │
+│                                                                      │
+│  ┌────────────┐    ┌───────────────┐    ┌────────────────────────┐  │
+│  │ Agent LLM  │───►│ Action JSON   │───►│ AdaptiveSRE Environment│  │
+│  │ Gen0/Gen1  │    │ command+mode  │    │ (5 services + cascade) │  │
+│  └─────┬──────┘    └───────────────┘    └───────────┬────────────┘  │
+│        │                                            reward            │
+│        │                         ┌────────────────────┴────────────┐  │
+│        └────────────────────────►│ Grader (3-layer reward model)   │  │
+│                                  │ incident + alignment + drift    │  │
+│                                  └───────────────┬─────────────────┘  │
+│                                                  │                    │
+│                                          GRPO (TRL + Unsloth)        │
+│                                          updates policy (Gen1)       │
+└──────────────────────────────────────────────────────────────────────┘
+```
+
+Hard-task demo behavior to look for:
+
+- Steps 1-7: alignment usually climbs (agent matched initial mode)
+- Steps 8-14: hidden drift may fire; alignment can drop sharply
+- After detection: trained agent pivots and alignment recovers
 
 ---
 
@@ -277,36 +286,26 @@ All scores clamped to `(0.001, 0.999)`. Episode score: `sum(step_rewards) / MAX_
 
 ---
 
-## Post-Training and Self-Improvement Strategy
+## Training and Self-Improvement
 
-### Gen 0 — Zero-Shot Baseline
+### Gen 0 (baseline)
 
-The base model (Llama-3.1-8B-Instruct, no fine-tuning) runs 50 episodes on the easy task to establish a floor. Key failure mode on hard task: BUDGET mode causes repeated scale actions (−0.5 each) with no recovery. Drift is never detected.
+- Zero-shot model on environment tasks.
+- Typical hard failure: keeps using previously good action after policy drift.
 
-### Gen 1 — GRPO Fine-tuning
+### Gen 1 (GRPO)
 
-200 episodes on the hard task. Three independent reward functions passed to `GRPOTrainer`:
+- GRPO fine-tuning with structured reward signals for incident quality, alignment, and drift response.
+- Learns to detect reward-pattern shifts and change strategy.
 
-- `reward_format` — did the action JSON contain all required fields?
-- `reward_alignment` — did the approach match the hidden Lead mode this step?
-- `reward_drift` — did drift detection fire at the correct moment?
+### Why this is self-improvement
 
-GRPO compares multiple rollouts of the same prompt, computes advantages without a value function, and shifts probability toward higher-reward behavior. The sparse drift detection signal (+0.5 once per episode) is supplemented by the denser alignment signal (every step) so the model learns continuously throughout the episode, not just at the end.
+- The objective is non-stationary; memorizing a fixed strategy is insufficient.
+- The agent must repeatedly update its internal policy from new reward evidence.
 
-### Self-Improvement Mechanism
+### Gen 2 roadmap
 
-The environment forces **continuous self-improvement** — the agent cannot memorize a winning strategy because the winning strategy changes mid-episode at a random step. Each generation of training must learn:
-
-1. What is currently broken (incident diagnosis)
-2. What is currently rewarded (lead mode inference)
-3. When the reward definition changed (drift detection)
-4. What the new reward definition is (post-drift adaptation)
-
-Point 4 requires updating an internal model of the Lead Engineer based on new evidence. This is recursive self-improvement through opponent modeling — the agent gets better at modeling a hidden actor, not just at performing a fixed task.
-
-### Future: Adversarial Self-Play (Gen 2)
-
-Gen 2 roadmap: an adversarial designer generates targeted drift scenarios that attack the trained agent's weak spots — unexpected drift timing, misleading fingerprints, rapid back-to-back mode changes. The environment difficulty adapts as the agent improves. No manual scenario authoring required.
+- Adversarial scenario generation and curriculum escalation to stress-test weak spots.
 
 ---
 
