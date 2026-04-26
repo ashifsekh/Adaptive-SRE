@@ -1,7 +1,6 @@
 # AdaptiveSRE: Training LLMs to Read the Room, Not Just Fix the Server
 
-**Links:** [GitHub](https://github.com/ashifsekh/Adaptive-SRE) · [HF Space](https://huggingface.co/spaces/ashifsekh/adaptive-sre) · [Demo Video](https://youtube.com/your-link-here)
-
+**Links:** [GitHub](https://github.com/ashifsekh/Adaptive-SRE) · [HF Space](https://huggingface.co/spaces/ashifsekh/adaptive-sre) ·
 ---
 
 ## The gap nobody was filling
