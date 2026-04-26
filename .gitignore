@@ -27,7 +27,6 @@ server.log
 # Internal docs (strategy, build guides — not for judges)
 AGENT.md
 MASTER_BUILD_GUIDE.md
-PROGRESS.md
 
 # Lock files (not needed for judging, large file)
 uv.lock
