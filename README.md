@@ -124,7 +124,7 @@ Colab T4 GPU (16GB VRAM)                    Docker Host
 │  ├─ Grader (3-layer reward)      │         │  └─ notif-svc    :8103       │
 │  └─ Gradio UI (live demo)        │         └──────────────────────────────┘
 │  GRPO Trainer (TRL + Unsloth)    │
-│  ├─ Llama-3.1-8B-Instruct 4bit  │
+│  ├─ Qwen2.5-7B-Instruct 4bit    │
 │  └─ LoRA r=16, lr=5e-6          │
 └──────────────────────────────────┘
 ```
@@ -133,7 +133,7 @@ Colab T4 GPU (16GB VRAM)                    Docker Host
 
 ## Agent Capabilities
 
-The agent is **Llama-3.1-8B-Instruct** (4-bit quantized, Unsloth) fine-tuned with LoRA (r=16) via GRPO. It operates in a closed diagnostic loop.
+The agent is **Qwen2.5-7B-Instruct** (4-bit quantized, Unsloth) fine-tuned with LoRA (r=16) via GRPO. It operates in a closed diagnostic loop.
 
 **What the agent can do:**
 
@@ -462,4 +462,4 @@ adaptive-sre/
 ## Acknowledgements
 
 Built for the Meta PyTorch × HuggingFace OpenEnv Hackathon, Round 2 Onsite — Bangalore, April 2026.
-Stack: OpenEnv · TRL · Unsloth · FastAPI · Gradio · Docker · Llama-3.1-8B
+Stack: OpenEnv · TRL · Unsloth · FastAPI · Gradio · Docker · Qwen2.5-7B

@@ -27,7 +27,7 @@ from train import (
 
 TASKS = ["easy", "medium", "hard"]
 EPISODES_PER_TASK = 20
-MODEL_NAME = "unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit"
+MODEL_NAME = "unsloth/Qwen2.5-7B-Instruct-bnb-4bit"
 
 
 def load_model(checkpoint_path: str):
@@ -138,7 +138,7 @@ def evaluate_model(model, tokenizer, task: str, env_url: str, episodes: int = 20
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--baseline_model", type=str, default=MODEL_NAME,
-                       help="Base model for Gen 0 (default: unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit)")
+                       help="Base model for Gen 0 (default: unsloth/Qwen2.5-7B-Instruct-bnb-4bit)")
     parser.add_argument("--trained_model", type=str, required=True,
                        help="Path to Gen 1 checkpoint directory")
     parser.add_argument("--env_url", type=str, default=DEFAULT_BASE_URL)

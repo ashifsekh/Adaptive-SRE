@@ -35,7 +35,7 @@ DEFAULT_BASE_URL = "http://localhost:8000"
 MAX_STEPS        = {"easy": 8, "medium": 12, "hard": 20}
 MAX_TOTAL_REWARD = {"easy": 8.0, "medium": 12.0, "hard": 20.0}
 
-MODEL_NAME     = "unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit"
+MODEL_NAME     = "unsloth/Qwen2.5-7B-Instruct-bnb-4bit"
 MAX_SEQ_LENGTH = 1024   # ← FIX 1: was 2048, cut in half to save VRAM
 LORA_R         = 16
 LORA_ALPHA     = 16
